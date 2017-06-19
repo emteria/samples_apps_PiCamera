@@ -14,8 +14,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 
-public class MainActivity extends Activity {
-
+public class MainActivity extends Activity
+{
     private ImageView mImageView;
     private SnapshotTask mSnapshotTask;
 
@@ -25,14 +25,16 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mImageView = (ImageView) findViewById(R.id.imageView);
 
         Button snapshotButton = (Button) findViewById(R.id.snapshotButton);
-        snapshotButton.setOnClickListener(new View.OnClickListener() {
+        snapshotButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 Log.i("MainActivity", "Snapshot task " + (mSnapshotTask != null ? mSnapshotTask.getStatus() : "null"));
@@ -45,13 +47,15 @@ public class MainActivity extends Activity {
         });
     }
 
-    private class SnapshotTask extends AsyncTask<Void, Void, String> {
-
+    private class SnapshotTask extends AsyncTask<Void, Void, String>
+    {
         private Exception mException;
 
         @Override
-        protected String doInBackground(Void... params) {
-            try {
+        protected String doInBackground(Void... params)
+        {
+            try
+            {
                 File temp = createTempFile();
                 String path = temp.getAbsolutePath();
                 Log.i("SnapshotTask", "Using temporary path: " + path);
@@ -71,13 +75,16 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(String s)
+        {
             super.onPostExecute(s);
 
-            if (s != null) {
+            if (s != null)
+            {
                 Log.i("SnapshotTask", "Updating image view path");
                 mImageView.setImageBitmap(BitmapFactory.decodeFile(s));
-            } else if (mException != null)
+            }
+            else if (mException != null)
             {
                 Toast.makeText(MainActivity.this, mException.getMessage(), Toast.LENGTH_SHORT).show();
             }
