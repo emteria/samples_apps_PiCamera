@@ -5,6 +5,7 @@
 /captures
 .externalNativeBuild
 
+.gradle/
 gradle/
 gradlew*
 
