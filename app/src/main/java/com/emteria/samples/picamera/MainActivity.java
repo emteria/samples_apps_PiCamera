@@ -16,13 +16,10 @@ import java.io.IOException;
 
 public class MainActivity extends Activity
 {
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private ImageView mImageView;
     private SnapshotTask mSnapshotTask;
-
-    private File createTempFile() throws IOException
-    {
-        return File.createTempFile("raspistill", ".jpg", getCacheDir());
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -30,21 +27,24 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mImageView = (ImageView) findViewById(R.id.imageView);
-
         Button snapshotButton = (Button) findViewById(R.id.snapshotButton);
         snapshotButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onClick(View v) {
-                Log.i("MainActivity", "Snapshot task " + (mSnapshotTask != null ? mSnapshotTask.getStatus() : "null"));
+            public void onClick(View v)
+            {
                 if (mSnapshotTask != null && mSnapshotTask.getStatus() != AsyncTask.Status.FINISHED)
+                {
+                    Log.i(TAG, "Waiting for the task to finish...");
                     return;
+                }
 
                 mSnapshotTask = new SnapshotTask();
                 mSnapshotTask.execute();
             }
         });
+
+        mImageView = (ImageView) findViewById(R.id.imageView);
     }
 
     private class SnapshotTask extends AsyncTask<Void, Void, String>
@@ -56,20 +56,23 @@ public class MainActivity extends Activity
         {
             try
             {
-                File temp = createTempFile();
+                File temp = File.createTempFile("raspistill", ".jpg", getCacheDir());
                 String path = temp.getAbsolutePath();
-                Log.i("SnapshotTask", "Using temporary path: " + path);
+
+                Log.i(TAG, "Using temporary path: " + path);
                 if (!RaspistillUtility.snapshot(path))
                 {
-                    Toast.makeText(MainActivity.this, "Failed to create snapshot", Toast.LENGTH_SHORT).show();
-                    return null;
+                    Log.e(TAG, "Failed to create snapshot");
+                    path = null;
                 }
+
                 return path;
             }
             catch (Exception ex)
             {
                 mException = ex;
-                Log.i("SnapshotTask", "Failed taking image", ex);
+                Log.i(TAG, "Failed taking image", ex);
+
                 return null;
             }
         }
